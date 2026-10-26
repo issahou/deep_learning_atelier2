@@ -33,7 +33,6 @@ attention multi-têtes écrite à la main, AdamW (lr 1e-3), scheduler cosinus, 1
 | ViT (scratch) | 0.9849 | 0.9848 | 0.0495 | 183.0 | 201 866 |
 | VGG16 (fine-tuned) | 0.9644 | 0.9644 | 0.1122 | 55.2 | 119 586 826 |
 | AlexNet (fine-tuned) | 0.9344 | 0.9341 | 0.2048 | **25.4** | 54 575 114 |
-| Faster R-CNN (après correction) | _à remplir_ | _à remplir_ | _à remplir_ | _à remplir_ | 18 917 458 |
 
 **Faster R-CNN — incident et correction.** 
 Précautions de lecture :
