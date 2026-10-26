@@ -40,7 +40,7 @@ Précautions de lecture :
 - La loss de Faster R-CNN (somme de 4 termes) n'est pas comparable à la cross-entropy des autres modèles.
 - Les temps dépendent du GPU alloué par Colab et du nombre d'époques (5 pour le CNN, 10 pour le ViT, 2 pour VGG16/AlexNet).
 
-Courbes : CNN — la loss d'entraînement et de test diminuent, l'accuracy passe de 0.9786 à 0.9929 en 5 époques (légère baisse à l'époque 4). ViT — l'accuracy passe de 0.9467 à 0.9849 en 10 époques, la loss de test continue de baisser (0.1749 → 0.0495). _(Insérer ici les images exportées du notebook.)_
+Courbes : CNN — la loss d'entraînement et de test diminuent, l'accuracy passe de 0.9786 à 0.9929 en 5 époques (légère baisse à l'époque 4). ViT — l'accuracy passe de 0.9467 à 0.9849 en 10 époques, la loss de test continue de baisser (0.1749 → 0.0495).
 
 ## Analyse
 
