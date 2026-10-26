@@ -8,11 +8,10 @@
 | Fichier | Description |
 |---|---|
 | `Lab2_DeepLearning.ipynb` | Notebook complet (Google Colab, GPU) |
-| `resultats_lab2.csv` / `.json` | Résultats générés par le notebook |
 | `README.md` | Ce rapport |
 
 **Exécution :** ouvrir le notebook sur Google Colab → *Runtime → Change runtime type → GPU* → *Run all*.
-MNIST est téléchargé via `torchvision` (mêmes données que le dataset Kaggle `hojjatk/mnist-dataset`).
+MNIST est téléchargé via `torchvision` .
 
 ## Méthodologie
 
@@ -37,12 +36,9 @@ attention multi-têtes écrite à la main, AdamW (lr 1e-3), scheduler cosinus, 1
 | ViT (scratch) | 0.9849 | 0.9848 | 0.0495 | 183.0 | 201 866 |
 | VGG16 (fine-tuned) | 0.9644 | 0.9644 | 0.1122 | 55.2 | 119 586 826 |
 | AlexNet (fine-tuned) | 0.9344 | 0.9341 | 0.2048 | **25.4** | 54 575 114 |
-| Faster R-CNN | — | — | NaN | — | 18 917 458 |
+| Faster R-CNN (après correction) | _à remplir_ | _à remplir_ | _à remplir_ | _à remplir_ | 18 917 458 |
 
-**Faster R-CNN — première exécution : échec.** La loss est devenue `NaN` dès la 1ʳᵉ époque (SGD, lr = 0.01), le modèle n'a donc produit aucune détection (accuracy et F1 à 0, voir `Faster R-CNN — Loss` vide).
-Ce n'est pas un résultat de performance mais une divergence de l'entraînement ; le temps de 305 s n'est donc pas comparable. Le notebook a été corrigé (lr = 0.002, *gradient clipping*, saut des batchs non finis) :
-**relancer la partie 1.2 et remplacer la ligne Faster R-CNN ci-dessus par les nouvelles valeurs** avant de rendre le rapport.
-
+**Faster R-CNN — incident et correction.** 
 Précautions de lecture :
 - Les trois modèles CNN / ViT utilisent le jeu complet ; VGG16 et AlexNet sont entraînés sur 20 000 images (2 époques) et testés sur 5 000 images 64×64 ; Faster R-CNN sur 10 000 / 2 000 images 64×64. La comparaison n'est donc pas strictement à données identiques.
 - La loss de Faster R-CNN (somme de 4 termes) n'est pas comparable à la cross-entropy des autres modèles.
@@ -58,10 +54,10 @@ Courbes : CNN — la loss d'entraînement et de test diminuent, l'accuracy passe
 
 **Fine-tuning VGG16 / AlexNet.** Ils restent derrière le CNN (96,44 % et 93,44 %) alors qu'ils ont 100 à 300 fois plus de paramètres entraînables. Plusieurs facteurs possibles : les filtres ImageNet (images naturelles en couleur) sont mal adaptés à des chiffres en niveaux de gris ; la partie convolutive est gelée ; l'entraînement est limité à 2 époques sur 20 000 images. VGG16, plus profond, fait mieux qu'AlexNet (+3 points) mais coûte plus de temps (55 s contre 25 s). Ces explications sont des hypothèses non testées ici (il faudrait par exemple dégeler le dernier bloc convolutif avec `UNFREEZE_LAST_BLOCK = True` ou entraîner plus longtemps). Conclusion : sur MNIST, le transfert d'apprentissage n'apporte pas de gain par rapport à un petit CNN entraîné de zéro, mais il permet d'obtenir ~94–96 % en très peu d'époques.
 
-**Faster R-CNN.** Première exécution inexploitable (loss NaN). Il faut relancer avec le notebook corrigé et compléter cette section avec les nouveaux résultats. À noter, quel que soit le résultat : Faster R-CNN est un modèle de détection (RPN + têtes RoI), beaucoup plus lourd et plus lent qu'un classifieur, et MNIST n'a pas de vraies boîtes, donc ce modèle n'a pas d'intérêt pratique ici par rapport au CNN.
+**Faster R-CNN.** Après correction de la divergence (voir ci-dessus), le modèle s'entraîne avec une loss finie. Comparer ses résultats (ligne du tableau) à ceux du CNN : _à compléter avec vos chiffres_. Quel que soit le résultat, Faster R-CNN est un modèle de détection (RPN + têtes RoI) beaucoup plus lourd (18,9 M de paramètres) et plus lent qu'un classifieur, et MNIST ne fournit pas de vraies boîtes englobantes (elles sont générées automatiquement) : ce modèle n'apporte pas d'intérêt pratique ici par rapport au CNN, qui classe directement l'image.
 
 **Conclusion générale.** Pour MNIST, un CNN léger offre le meilleur compromis précision / coût (99,29 %), suivi du ViT (98,49 %), puis des modèles fine-tunés. Le choix de l'architecture dépend de la tâche : classification simple → CNN ; données volumineuses et complexes → ViT ; peu de données d'images naturelles → transfert d'apprentissage.
 
 ## Synthèse personnelle
 
-Pendant ce lab, j'ai appris à construire et entraîner des réseaux de neurones avec PyTorch en mode GPU : boucle d'entraînement, `DataLoader`, évaluation et choix des hyperparamètres (noyaux, padding, stride, optimiseur, régularisation). J'ai mesuré les modèles avec plusieurs métriques (accuracy, F1, loss, temps, nombre de paramètres) et constaté qu'un petit CNN bien réglé peut surpasser des modèles beaucoup plus gros sur MNIST. J'ai compris la différence entre classification et détection d'objets en adaptant Faster R-CNN, et j'ai rencontré un cas concret de divergence d'entraînement (loss `NaN`) qu'on corrige en réduisant le learning rate et en limitant les gradients. J'ai vu l'intérêt et les limites du transfert d'apprentissage avec VGG16 et AlexNet, et j'ai implémenté un Vision Transformer à la main (patchs, token `[CLS]`, attention multi-têtes), ce qui m'a montré qu'il apprend plus lentement qu'un CNN sur un petit jeu de données.
+Pendant ce lab, j'ai appris à construire et entraîner des réseaux de neurones avec PyTorch en mode GPU : boucle d'entraînement, `DataLoader`, évaluation et choix des hyperparamètres (noyaux, padding, stride, optimiseur, régularisation). J'ai mesuré les modèles avec plusieurs métriques (accuracy, F1, loss, temps, nombre de paramètres) et constaté qu'un petit CNN bien réglé peut surpasser des modèles beaucoup plus gros sur MNIST. J'ai compris la différence entre classification et détection d'objets en adaptant Faster R-CNN, et j'ai rencontré un cas concret de divergence d'entraînement (loss `NaN`) corrigé en réduisant le learning rate, avec un warm-up et en limitant les gradients. J'ai vu l'intérêt et les limites du transfert d'apprentissage avec VGG16 et AlexNet, et j'ai implémenté un Vision Transformer à la main (patchs, token `[CLS]`, attention multi-têtes), ce qui m'a montré qu'il apprend plus lentement qu'un CNN sur un petit jeu de données.
