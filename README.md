@@ -1,8 +1,5 @@
 # Lab 2 — Deep Learning (PyTorch, GPU) : CNN, Faster R-CNN, Fine-tuning, ViT sur MNIST
 
-**FST Tanger — Cycle LSI — Pr. ELAACHAK Lotfi**
-**Étudiant :** _(nom, prénom)_
-
 ## Contenu du dépôt
 
 | Fichier | Description |
